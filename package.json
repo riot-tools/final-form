@@ -30,6 +30,11 @@
     "url": "https://github.com/damusix/riot-final-form/issues"
   },
   "homepage": "https://github.com/damusix/riot-final-form#readme",
+  "peerDependencies": {
+
+    "final-form": ">= 4.x.x",
+    "riot": ">= 4.x.x"
+  },
   "devDependencies": {
     "@babel/polyfill": "^7.7.0",
     "@babel/preset-env": "^7.7.1",

@@ -202,8 +202,8 @@ const withFinalForm = (component) => {
         const formEl = formElement.apply(mountedComponent);
 
         formEl.addEventListener('submit', e => {
-            e.preventDefault()
-            state.form.submit()
+            e.preventDefault();
+            state.form.submit();
         });
 
         formEl.addEventListener('reset', () => {
@@ -238,6 +238,5 @@ const withFinalForm = (component) => {
 
     return component;
 };
-
 
 export default withFinalForm;

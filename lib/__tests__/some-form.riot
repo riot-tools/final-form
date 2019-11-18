@@ -34,10 +34,11 @@
 
         export default withFinalForm({
             formElement() {
+                this.props.element();
                 return this.$('form');
             },
             onSubmit(values) {
-                $api.post('/stuff', values);
+                this.props.submit('/stuff', values);
             },
             initialValues: {
                 name: '',
@@ -45,43 +46,33 @@
                 address: ''
             },
             validate(values) {
-                const errors = {};
-                if (!values.name) errors.name = 'name is required';
-                if (!values.age) errors.age = 'age is required';
-                if (!/^\d+$/.test(values.age)) errors.age = 'age must be a number';
-                return errors;
+                this.props.validate(values);
+                return {};
             },
-            onFormChange({ valid }) {
-
-                console.log('formElement', this.formElement());
-                const submit = this.formElement().querySelector('[type=submit]');
-                submit.disabled = !valid;
+            onFormChange(formState) {
+                this.props.formState(formState);
             },
-            onFieldChange(field, { touched, error }) {
-
-                const errorEl = field.parentElement.querySelector('.error');
-
-                if (touched && error) {
-                    if (errorEl) errorEl.innerHTML = error;
-                    field.parentElement.classList.add('error');
-                } else {
-                    if (errorEl) errorEl.innerHTML = '';
-                    field.parentElement.classList.remove('error');
-                }
+            onFieldChange(field, fieldState) {
+                this.props.fieldState(field, fieldState);
             },
             formSubscriptions: {
                 visited: true,
-                dirty: true
+                dirty: true,
+                valid: true
             },
             fieldSubscriptions: {
                 name: {
+                    pristine: true,
+                    valid: true
+                },
+                age: {
                     pristine: true,
                     valid: true
                 }
             },
             fieldConfigs: {
                 address: {
-                    afterSubmit: () => console.log('afterSubmit yay!!')
+                    afterSubmit: () => this.props.mocks.fieldConfig
                 }
             }
         });

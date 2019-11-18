@@ -6,9 +6,9 @@ export default {
     'final-form'
   ],
   plugins: [
-    resolve({
-      jsnext: true
-    })
+    // resolve({
+    //   // jsnext: true
+    // })
   ],
   output: [
     {

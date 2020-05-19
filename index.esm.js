@@ -127,17 +127,24 @@ const withFinalForm = (component) => {
             fieldState => {
                 const { blur, change, focus, value, ...rest } = fieldState;
 
-                // first time, register event listeners
-                if (!state.registered[name]) {
+                // first time, register event listeners, unless it's a radio field
+                if (!state.registered[name] || field.type === 'radio') {
                     field.addEventListener('blur', () => blur());
-                    field.addEventListener('input', event =>
-                      change(
-                        field.type === 'checkbox'
-                          ? event.target.checked
-                          : event.target.value
-                      )
-                    );
                     field.addEventListener('focus', () => focus());
+
+                    if (field.type === 'radio') {
+                        field.addEventListener('change', (e) => {
+                            // Get radio label text as Radio button value
+                            return change(e.target.labels[0].innerText)
+                        });
+                    }
+                    else {
+                        field.addEventListener('input', event => change(
+                            field.type === 'checkbox'
+                                ? event.target.checked
+                                : event.target.value
+                        ));
+                    }
                     state.registered[name] = true;
                 }
 

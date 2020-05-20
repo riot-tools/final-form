@@ -135,7 +135,7 @@ const withFinalForm = (component) => {
                     if (field.type === 'radio') {
                         field.addEventListener('change', (e) => {
                             // Get radio label text as Radio button value
-                            return change(e.target.labels[0].innerText)
+                            return change(e.target.value || e.target.labels[0].innerText)
                         });
                     }
                     else {

@@ -23,16 +23,17 @@ const optionalFnValidate = (fn) => fn && isNotFunction(fn);
  * Creates a final form wrapper for a component. Automatically unsubscribes and removes form when component unmounts.
  *
  * @param {object} component Riot component
- * @param {function} component.formElement required function that returns the form element to bind to
- * @param {function} component.onSubmit required onSubmit function
- * @param {object} component.initialValues form initialValues
- * @param {function} component.validate form validate function
- * @param {onFormChange} component.onFormChange form listener that passes form state
- * @param {object} component.formSubscriptions form subscriptions
- * @param {object} component.formConfig final form configs
- * @param {onFieldChange} component.onFieldChange callback ran when a field changes
- * @param {object} component.fieldSubscriptions a map of field subscriptions
- * @param {object} component.fieldConfigs a map of field configs
+ * @param {function} component.formElement Required function that returns the form element to bind to
+ * @param {function} component.onSubmit Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`
+ * @param {boolean} component.enableDefaultBehavior Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit`
+ * @param {object} component.initialValues Final Form initialValues
+ * @param {function} component.validate Form validate function
+ * @param {onFormChange} component.onFormChange Final Form listener that passes form state
+ * @param {object} component.formSubscriptions Final Form subscriptions
+ * @param {object} component.formConfig Final Form configs
+ * @param {onFieldChange} component.onFieldChange Callback ran when a field changes
+ * @param {object} component.fieldSubscriptions Final Form field subscriptions
+ * @param {object} component.fieldConfigs Final Form field configs
  *
  * @example
  *
@@ -96,12 +97,14 @@ const withFinalForm = (component) => {
         registered: {}
     };
 
+    let { onSubmit } = component;
+
     const {
         onBeforeUnmount,
         onMounted,
 
         formElement,
-        onSubmit,
+        enableDefaultBehavior,
         validate,
         onFormChange,
         onFieldChange,
@@ -113,11 +116,16 @@ const withFinalForm = (component) => {
         fieldConfigs = {}
     } = component;
 
+    // onSubmit is useless if default behavior is enabled
+    if (enableDefaultBehavior === true) {
+        onSubmit = function () {};
+    }
+
     if (requiredFnValidate(formElement)) { throw TypeError('formElement is not a function'); }
-    if (requiredFnValidate(onSubmit)) { throw TypeError('onSubmit is not a function'); }
     if (optionalFnValidate(validate)) { throw TypeError('validate is not a function'); }
     if (optionalFnValidate(onFieldChange)) { throw TypeError('onFieldChange is not a function'); }
     if (optionalFnValidate(onFormChange)) { throw TypeError('onFormChange is not a function'); }
+    if (requiredFnValidate(onSubmit)) { throw TypeError('onSubmit is not a function'); }
 
     // Register field with form
     const registerField = (mountedComponent, field) => {
@@ -209,8 +217,12 @@ const withFinalForm = (component) => {
         const formEl = formElement.apply(mountedComponent);
 
         formEl.addEventListener('submit', e => {
-            e.preventDefault();
-            state.form.submit();
+
+            if (enableDefaultBehavior !== true) {
+
+                e.preventDefault();
+                state.form.submit();
+            }
         });
 
         formEl.addEventListener('reset', () => {

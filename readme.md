@@ -1,21 +1,21 @@
-# Riot Final Form
+# Riot Final Form <!-- omit in toc -->
 
 Easily implement final form in your Riot components.
 
-
-* [Usage](#usage)
-* [withFinalForm(component)](#withfinalformcomponent)
-* [onFormChange : function](#onformchange--function)
-* [onFieldChange : function](#onfieldchange--function)
+- [Usage](#usage)
+- [withFinalForm(component)](#withfinalformcomponent)
+- [onFormChange : `function`](#onformchange--function)
+- [onFieldChange : `function`](#onfieldchange--function)
 
 ## Usage
+
+This library is built under the premise that you want to submit forms via XHR requests. `e.preventDefault()` is called on submit unless explicitly specified otherwise. See [this](#defaultDomBehaviorExample) and [this](#enableDefaultBehaviorOption)
 
 ```sh
 npm i -S riot-final-form
 ```
 
-
-Your riot component
+***Your riot component:***
 ```html
 <some-form>
 
@@ -152,24 +152,45 @@ Your riot component
 </some-form>
 ```
 
+<a name="defaultDomBehaviorExample"></a>
+
+***Optionally if you wanted to keep default DOM behavior:***
+```html
+<some-form>
+    <form> ... </form>
+
+    <script>
+
+        export default withFinalForm({
+            ...
+            enableDefaultBehavior: true // onSubmit not required and will be ignored
+            ...
+        })
+    </script>
+</some-form>
+
+```
+
+
+
 ---
 
 ## withFinalForm(component)
 Creates a final form wrapper for a component. Automatically unsubscribes and removes form when component unmounts. Configuration callbacks are all called bound to the riot component, so the lexical `this` will be the same as `onMounted`. The following configuration options are available:
 
-| Param | Type | Description |
-| --- | --- | --- |
-| component.formElement | `function` | required function that returns the form element to bind to |
-| component.onSubmit | `function` | required onSubmit function |
-| component.validate | `function` | final form validate function |
-| component.onFormChange | [`onFormChange`](#onFormChange) | form listener; passes final form state |
-| component.initialValues | `object` | final form initialValues |
-| component.formSubscriptions | `object` | final form subscriptions |
-| component.formConfig | `object` | final form configs |
-| component.onFieldChange | [`onFieldChange`](#onFieldChange) | callback ran when a field changes |
-| component.fieldSubscriptions | `object` | a map of field subscriptions |
-| component.fieldConfigs | `object` | a map of field configs |
-
+| Param                           | Type                             | Description                                                                                                                  |
+| ------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| component.formElement           | `function`                       | Required function that returns the form element to bind to                                                                   |
+| component.onSubmit              | `function`                       | Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`    |
+| component.enableDefaultBehavior | `boolean`                        | Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit` <a name="enableDefaultBehaviorOption"></a> |
+| component.initialValues         | `object`                         | Final Form initialValues                                                                                                     |
+| component.validate              | `function`                       | Form validate function                                                                                                       |
+| component.onFormChange          | [`onFormChange`](#onFormChange)  | Final Form listener that passes form state                                                                                   |
+| component.formSubscriptions     | `object`                         | Final Form subscriptions                                                                                                     |
+| component.formConfig            | `object`                         | Final Form configs                                                                                                           |
+| component.onFieldChange         | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                            |
+| component.fieldSubscriptions    | `object`                         | Final Form field subscriptions                                                                                               |
+| component.fieldConfigs          | `object`                         | Final Form field configs                                                                                                     |
 
 ---
 
@@ -177,8 +198,8 @@ Creates a final form wrapper for a component. Automatically unsubscribes and rem
 ## onFormChange : `function`
 Form change callback
 
-| Param | Type | Description |
-| --- | --- | --- |
+| Param     | Type     | Description      |
+| --------- | -------- | ---------------- |
 | formState | `object` | final form state |
 
 
@@ -188,7 +209,7 @@ Form change callback
 ## onFieldChange : `function`
 Field change callback
 
-| Param | Type | Description |
-| --- | --- | --- |
-| field | `HTMLElement` | form field |
-| fieldState | `object` | final form field state |
+| Param      | Type          | Description            |
+| ---------- | ------------- | ---------------------- |
+| field      | `HTMLElement` | form field             |
+| fieldState | `object`      | final form field state |

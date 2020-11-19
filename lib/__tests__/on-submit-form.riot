@@ -1,4 +1,4 @@
-<some-form>
+<on-submit-form>
 
     <form class='grid wrap'>
 
@@ -32,12 +32,21 @@
 
         import withFinalForm from '..';
 
-        export default withFinalForm({
+        const component = withFinalForm({
+            handleAfterSubmit() {
+                this.props.fieldConfig();
+            },
+            onMounted() {
+                // Pass the lexical this after Riot has set it for testing
+                // afterSubmit functionality
+                component.handleAfterSubmit = this.handleAfterSubmit;
+            },
             formElement() {
                 this.props.element();
                 return this.$('form');
             },
             onSubmit(values) {
+
                 this.props.submit('/stuff', values);
             },
             initialValues: {
@@ -72,9 +81,14 @@
             },
             fieldConfigs: {
                 address: {
-                    afterSubmit: () => this.props.mocks.fieldConfig
+                    afterSubmit: function () {
+
+                        return component.handleAfterSubmit();
+                    }
                 }
             }
         });
+
+        export default component
     </script>
-</some-form>
+</on-submit-form>

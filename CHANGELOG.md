@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/damusix/riot-final-form/compare/v1.0.0...v1.1.0) (2020-11-19)
+
+
+### Features
+
+* 🎸 version bump ([12def88](https://github.com/damusix/riot-final-form/commit/12def880564e2286f0bac95101023c704c39eb55))
+
 # 1.0.0 (2020-11-19)
 
 

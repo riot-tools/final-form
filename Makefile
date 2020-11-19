@@ -6,7 +6,6 @@ test:
 	@ npm run test
 
 deploy:
-	@ npm run lint
 	@ npm run test
 	@ npm run rollup
 	@ npm run release

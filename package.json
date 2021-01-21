@@ -1,6 +1,6 @@
 {
   "name": "riot-final-form",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Riot HOC for using Final Form",
   "main": "index.umd.js",
   "module": "index.esm.js",

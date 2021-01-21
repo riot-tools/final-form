@@ -1,8 +1,176 @@
 import { createForm } from 'final-form';
 
+// Register field with form
+function registerField (state, field) {
+
+    // Lexical this = mounted component
+    const self = this;
+
+    const {
+        fieldSubscriptions = {},
+        fieldConfigs = {},
+        onFieldChange
+    } = self;
+
+    const { name } = field;
+
+    state.form.registerField(
+        name,
+        fieldState => {
+            const { blur, change, focus, value, ...rest } = fieldState;
+
+            // first time, register event listeners, unless it's a radio field
+            if (!state.registered[name] || field.type === 'radio') {
+                field.addEventListener('blur', () => blur());
+                field.addEventListener('focus', () => focus());
+
+                // Radio buttons and hidden fields would not have a blur event
+                // in some cases, instead we bind to change event
+                if (field.type === 'radio' || field.type === 'hidden') {
+
+                    // Get radio label text as Radio button value
+                    field.addEventListener('change', ({ target }) => (
+                        change(
+                            target.value || (
+                                target.labels[0] || {}
+                            ).innerText
+                        )
+                    ));
+                }
+                else {
+                    field.addEventListener('input', ({ target }) => change(
+                        field.type === 'checkbox'
+                            ? target.checked
+                            : target.value
+                    ));
+                }
+                state.registered[name] = true;
+            }
+
+            // update value
+            if (field.type === 'checkbox') {
+                field.checked = value;
+            } else {
+                field.value = value === undefined ? '' : value;
+            }
+
+            // execute field change callback
+            // Pass field, value, and other final form field subscriptions
+            if (onFieldChange) {
+
+                onFieldChange.apply(self, [field, { value, ...rest }]);
+            }
+        },
+
+        // Default listeners
+        // Can be overwritten with field
+        {
+            value: true,
+            error: true,
+            touched: true,
+            ...(fieldSubscriptions[name] || {})
+        },
+
+        // Field configurations can also be passed per field
+        {
+            ...(fieldConfigs[name] || {})
+        }
+    );
+}
+
 const isNotFunction = fn => fn.constructor !== Function;
 const requiredFnValidate = (fn) => !fn || isNotFunction(fn);
 const optionalFnValidate = (fn) => fn && isNotFunction(fn);
+
+const assertProperConfig = (component) => {
+
+    if (requiredFnValidate(component.formElement)) { throw TypeError('formElement is not a function'); }
+    if (optionalFnValidate(component.validate)) { throw TypeError('validate is not a function'); }
+    if (optionalFnValidate(component.onFieldChange)) { throw TypeError('onFieldChange is not a function'); }
+    if (optionalFnValidate(component.onFormChange)) { throw TypeError('onFormChange is not a function'); }
+    if (optionalFnValidate(component.onSubmit)) { throw TypeError('onSubmit is not a function'); }
+};
+
+function initializeFinalForm (state) {
+
+    // Lexical this = mounted component
+    const self = this;
+
+    const {
+
+        initialValues = {},
+        formConfig = {},
+        formSubscriptions = {},
+
+        onSubmit,
+        validate,
+        onFormChange,
+        formElement
+    } = self;
+
+    // Manually initialized forms are not validated onMount,
+    // instead they are validated on initialization
+    if (self.manuallyInitializeFinalForm === true) {
+
+        assertProperConfig(self);
+    }
+
+    // Create form after component is mounted
+    state.form = createForm({
+        ...(formConfig || {}),
+        initialValues,
+        onSubmit: (...args) => onSubmit.apply(self, args),
+        validate: (...args) => validate.apply(self, args),
+        destroyOnUnregister: true
+    });
+
+    state.unsubscribe = state.form.subscribe(
+        formState => {
+            if (onFormChange) {
+                onFormChange.apply(self, [formState]);
+            }
+        },
+        { // FormSubscription: the list of values you want to be updated about
+            dirty: true,
+            valid: true,
+            values: true,
+            ...(formSubscriptions || {})
+        }
+    );
+
+    const formEl = formElement.apply(self);
+
+    formEl.addEventListener('submit', e => {
+
+        if (!state.enableDefaultBehavior) {
+
+            e.preventDefault();
+            state.form.submit();
+        }
+    });
+
+    formEl.addEventListener('reset', () => {
+
+        state.form.reset();
+    });
+
+    [...formEl.elements].forEach(field => {
+
+        // Only register valid fields with names
+        // Skip fields that are flagged to be ignored
+        const skip = (
+            field.nodeName === 'BUTTON' ||
+            field.hasAttribute('ignore') ||
+            !field.name ||
+            field.type === 'button' ||
+            field.type === 'reset'
+        );
+
+
+        if (skip) { return }
+        registerField.apply(self, [state, field]);
+    });
+}
 
 /**
  * Form change callback
@@ -23,9 +191,9 @@ const optionalFnValidate = (fn) => fn && isNotFunction(fn);
  * Creates a final form wrapper for a component. Automatically unsubscribes and removes form when component unmounts.
  *
  * @param {object} component Riot component
- * @param {function} component.formElement Required function that returns the form element to bind to
- * @param {function} component.onSubmit Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`
- * @param {boolean} component.enableDefaultBehavior Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit`
+ * @param {function} component.formElement [Required] function that returns the form element to bind to
+ * @param {function} component.onSubmit Final Form submit function. If onSubmit is set, e.preventDefault() will be called in favor of this.
+ * @param {boolean} component.manuallyInitializeFinalForm In case you want to manually initialize final form after some async event.
  * @param {object} component.initialValues Final Form initialValues
  * @param {function} component.validate Form validate function
  * @param {onFormChange} component.onFormChange Final Form listener that passes form state
@@ -97,159 +265,52 @@ const withFinalForm = (component) => {
         registered: {}
     };
 
-    let { onSubmit } = component;
+    // If there is no onSubmit function, we will assume default DOM behavior
+    if (!component.onSubmit) {
+        component.onSubmit = function () {};
+        state.enableDefaultBehavior = true;
+    }
+
+    // Validation is optional
+    if (!component.validate) {
+        component.validate = function () {};
+    }
 
     const {
         onBeforeUnmount,
-        onMounted,
-
-        formElement,
-        enableDefaultBehavior,
-        validate,
-        onFormChange,
-        onFieldChange,
-
-        initialValues = {},
-        formConfig = {},
-        formSubscriptions = {},
-        fieldSubscriptions = {},
-        fieldConfigs = {}
+        onMounted
     } = component;
 
-    // onSubmit is useless if default behavior is enabled
-    if (enableDefaultBehavior === true) {
-        onSubmit = function () {};
+    // Validate configuration if we are not manually initializing
+    if (component.manuallyInitializeFinalForm !== true) {
+
+        assertProperConfig(component);
     }
 
-    if (requiredFnValidate(formElement)) { throw TypeError('formElement is not a function'); }
-    if (optionalFnValidate(validate)) { throw TypeError('validate is not a function'); }
-    if (optionalFnValidate(onFieldChange)) { throw TypeError('onFieldChange is not a function'); }
-    if (optionalFnValidate(onFormChange)) { throw TypeError('onFormChange is not a function'); }
-    if (requiredFnValidate(onSubmit)) { throw TypeError('onSubmit is not a function'); }
+    // Set function for manual initializing. Prevent double initialization.
+    component.initializeFinalForm = function () {
 
-    // Register field with form
-    const registerField = (mountedComponent, field) => {
-        const { name } = field;
-        state.form.registerField(
-            name,
-            fieldState => {
-                const { blur, change, focus, value, ...rest } = fieldState;
+        if (state.form !== null) {
 
-                // first time, register event listeners, unless it's a radio field
-                if (!state.registered[name] || field.type === 'radio') {
-                    field.addEventListener('blur', () => blur());
-                    field.addEventListener('focus', () => focus());
+            throw Error('FinalForm has already been initialized on this component');
+        }
 
-                    if (field.type === 'radio' || field.type === 'hidden') {
-                        field.addEventListener('change', (e) => {
-                            // Get radio label text as Radio button value
-                            return change(e.target.value || e.target.labels[0].innerText)
-                        });
-                    }
-                    else {
-                        field.addEventListener('input', event => change(
-                            field.type === 'checkbox'
-                                ? event.target.checked
-                                : event.target.value
-                        ));
-                    }
-                    state.registered[name] = true;
-                }
-
-                // update value
-                if (field.type === 'checkbox') {
-                    field.checked = value;
-                } else {
-                    field.value = value === undefined ? '' : value;
-                }
-
-                // execute field change callback
-                // Pass field, value, and other final form field subscriptions
-                if (onFieldChange) {
-
-                    onFieldChange.apply(mountedComponent, [field, { value, ...rest }]);
-                }
-            },
-
-            // Default listeners
-            // Can be overwritten with field
-            {
-                value: true,
-                error: true,
-                touched: true,
-                ...(fieldSubscriptions[name] || {})
-            },
-
-            // Field configurations can also be passed per field
-            {
-                ...(fieldConfigs[name] || {})
-            }
-        );
-    };
-
-    component.initializeFinalForm = function (mountedComponent) {
-
-        // Create form after component is mounted
-        state.form = createForm({
-            ...(formConfig || {}),
-            initialValues,
-            onSubmit: (...args) => onSubmit.apply(mountedComponent, args),
-            validate: (...args) => validate.apply(mountedComponent, args),
-            destroyOnUnregister: true
-        });
-
-        state.unsubscribe = state.form.subscribe(
-            formState => {
-                if (onFormChange) {
-                    onFormChange.apply(mountedComponent, [formState]);
-                }
-            },
-            { // FormSubscription: the list of values you want to be updated about
-                dirty: true,
-                valid: true,
-                values: true,
-                ...(formSubscriptions || {})
-            }
-        );
-
-        const formEl = formElement.apply(mountedComponent);
-
-        formEl.addEventListener('submit', e => {
-
-            if (enableDefaultBehavior !== true) {
-
-                e.preventDefault();
-                state.form.submit();
-            }
-        });
-
-        formEl.addEventListener('reset', () => {
-
-            state.form.reset();
-        });
-
-        [...formEl.elements].forEach(field => {
-            if (field.name) {
-                registerField(mountedComponent, field);
-            }
-        });
+        return initializeFinalForm.apply(this, [state]);
     };
 
     component.onMounted = function (...riotargs) {
 
-        const mountedComponent = this;
+        if (!this.manuallyInitializeFinalForm) {
 
-        if (!mountedComponent.manuallyInitializeFinalForm) {
-
-            component.initializeFinalForm(mountedComponent);
+            initializeFinalForm.apply(this, [state]);
         }
 
-
         if (onMounted) {
-            onMounted.apply(mountedComponent, riotargs);
+            onMounted.apply(this, riotargs);
         }
     };
 
+    // Cleanup before unmounting to avoid memory leaks
     component.onBeforeUnmount = function (...args) {
 
         state.unsubscribe();
@@ -262,6 +323,7 @@ const withFinalForm = (component) => {
         }
     };
 
+    // Access finaly form
     component.finalForm = () => state.form;
 
     return component;

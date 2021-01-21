@@ -144,7 +144,7 @@
                         field.addEventListener('blur', () => blur());
                         field.addEventListener('focus', () => focus());
 
-                        if (field.type === 'radio') {
+                        if (field.type === 'radio' || field.type === 'hidden') {
                             field.addEventListener('change', (e) => {
                                 // Get radio label text as Radio button value
                                 return change(e.target.value || e.target.labels[0].innerText)
@@ -191,9 +191,7 @@
             );
         };
 
-        component.onMounted = function (...riotargs) {
-
-            const mountedComponent = this;
+        component.initializeFinalForm = function (mountedComponent) {
 
             // Create form after component is mounted
             state.form = finalForm.createForm({
@@ -239,6 +237,17 @@
                     registerField(mountedComponent, field);
                 }
             });
+        };
+
+        component.onMounted = function (...riotargs) {
+
+            const mountedComponent = this;
+
+            if (!mountedComponent.manuallyInitializeFinalForm) {
+
+                component.initializeFinalForm(mountedComponent);
+            }
+
 
             if (onMounted) {
                 onMounted.apply(mountedComponent, riotargs);

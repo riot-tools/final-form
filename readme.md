@@ -6,6 +6,8 @@ Easily implement final form in your Riot components.
 - [withFinalForm(component)](#withfinalformcomponent)
 - [onFormChange : `function`](#onformchange--function)
 - [onFieldChange : `function`](#onfieldchange--function)
+- [Manually initialize final form](#manually-initialize-final-form)
+      - [Example:](#example)
 
 ## Usage
 
@@ -178,19 +180,20 @@ npm i -S riot-final-form
 ## withFinalForm(component)
 Creates a final form wrapper for a component. Automatically unsubscribes and removes form when component unmounts. Configuration callbacks are all called bound to the riot component, so the lexical `this` will be the same as `onMounted`. The following configuration options are available:
 
-| Param                           | Type                             | Description                                                                                                                  |
-| ------------------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| component.formElement           | `function`                       | Required function that returns the form element to bind to                                                                   |
-| component.onSubmit              | `function`                       | Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`    |
-| component.enableDefaultBehavior | `boolean`                        | Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit` <a name="enableDefaultBehaviorOption"></a> |
-| component.initialValues         | `object`                         | Final Form initialValues                                                                                                     |
-| component.validate              | `function`                       | Form validate function                                                                                                       |
-| component.onFormChange          | [`onFormChange`](#onFormChange)  | Final Form listener that passes form state                                                                                   |
-| component.formSubscriptions     | `object`                         | Final Form subscriptions                                                                                                     |
-| component.formConfig            | `object`                         | Final Form configs                                                                                                           |
-| component.onFieldChange         | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                            |
-| component.fieldSubscriptions    | `object`                         | Final Form field subscriptions                                                                                               |
-| component.fieldConfigs          | `object`                         | Final Form field configs                                                                                                     |
+| Param                                                                    | Type                              | Description                                                                                                                  |
+| ------------------------------------------------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| component.formElement                                                    | `function`                        | Required function that returns the form element to bind to                                                                   |
+| component.onSubmit                                                       | `function`                        | Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`    |
+| component.enableDefaultBehavior                                          | `boolean`                         | Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit` <a name="enableDefaultBehaviorOption"></a> |
+| component.initialValues                                                  | `object`                          | Final Form initialValues                                                                                                     |
+| component.validate                                                       | `function`                        | Form validate function                                                                                                       |
+| component.onFormChange                                                   | [`onFormChange`](#onFormChange)   | Final Form listener that passes form state                                                                                   |
+| component.formSubscriptions                                              | `object`                          | Final Form subscriptions                                                                                                     |
+| component.formConfig                                                     | `object`                          | Final Form configs                                                                                                           |
+| component.onFieldChange                                                  | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                            |
+| component.fieldSubscriptions                                             | `object`                          | Final Form field subscriptions                                                                                               |
+| component.fieldConfigs                                                   | `object`                          | Final Form field configs                                                                                                     |
+| [component.manuallyInitializeFinalForm](#manually-initialize-final-form) | `boolean`                         | In case you want to manually initialize final form after some async event                                                    |
 
 ---
 
@@ -213,3 +216,38 @@ Field change callback
 | ---------- | ------------- | ---------------------- |
 | field      | `HTMLElement` | form field             |
 | fieldState | `object`      | final form field state |
+
+## Manually initialize final form
+
+There may be cases where you want to manually initialize FF, such as when you depend on an XHR request to load initial values. For these scenarios, you can use the `manuallyInitializeFinalForm` flag on your component, and manually trigger `component.initializeFinalForm(component);` inside of a lifecycle hook. The mounted riot component must be passed into the initialize function.
+
+##### Example:
+
+```html
+<some-form>
+
+    ...
+
+    <script>
+
+        export default withFinalForm({
+            manuallyInitializeFinalForm: true,
+
+            onMounted() {
+
+                // Reference component
+                const self = this;
+
+                getData().then((data) => {
+
+                    self.initialValues = someData;
+
+                    // Must pass component for cases where you cannot
+                    // depend on lexical this
+                    self.initializeFinalForm(self);
+                });
+            }
+        })
+    </script>
+</some-form>
+```

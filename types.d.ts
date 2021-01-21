@@ -34,6 +34,7 @@ interface RiotFinalFormConfig {
     formElement: FormElementFunction;
     onSubmit: OnSubmitFunction;
     enableDefaultBehavior: boolean;
+    manuallyInitializeFinalForm: boolean;
     initialValues: object;
     validate: ValidateFunction;
     onFormChange: FormSubscriber<Object>;

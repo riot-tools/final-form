@@ -1,0 +1,37 @@
+<field-type-events>
+
+    <form>
+        <input type="text" name="name" />
+
+        <input type="checkbox" name="music" />
+
+
+        <label for="male">Male</label>
+        <label for="female">Female</label>
+        <input id="male" type="radio" name="gender" value="m" />
+        <input id="female" type="radio" name="gender" value="f" />
+
+        <input type="hidden" name="captcha" />
+
+        <button type='reset'>Reset</button>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+
+        import withFinalForm from '..';
+
+        const component = withFinalForm({
+            formElement() {
+                this.props.element();
+                return this.$('form');
+            },
+            onSubmit(values) {
+
+                this.props.submit('/stuff', values);
+            }
+        });
+
+        export default component
+    </script>
+</field-type-events>

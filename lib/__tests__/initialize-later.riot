@@ -1,31 +1,7 @@
 <initialize-later>
 
-    <form class='grid wrap'>
-
-        <div class="field col w-70 pr-md">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" />
-            <div class="error"></div>
-        </div>
-        <div class="field col w-30">
-            <label for="age">Age</label>
-            <input type="text" id="age" name="age" />
-            <div class="error"></div>
-        </div>
-        <div class="field col w-100">
-            <label for="address">Address</label>
-            <input type="text" id="address" name="address" />
-            <div class="error"></div>
-        </div>
-
-        <div class="actions grid">
-            <div class="col w-50">
-                <button type='reset'>Reset</button>
-            </div>
-            <div class="col w-50 text-right">
-                <button type="submit">Submit</button>
-            </div>
-        </div>
+    <form>
+        <input type="text" name="name" />
     </form>
 
     <script>
@@ -39,50 +15,13 @@
             },
 
             manuallyInitializeFinalForm: true,
-            onSubmit(values) {},
+
             onMounted() {
 
-
-                this.initialValues = {
-                    name: 'tutu',
-                    age: 21,
-                    address: 'tata'
-                };
+                this.initialValues = { name: 'tutu' };
 
                 this.props.initializeLater(this);
                 this.initializeFinalForm();
-            },
-
-            validate(values) {
-                this.props.validate(values);
-                return {};
-            },
-
-            onFormChange(formState) {
-                this.props.formState(formState);
-            },
-            onFieldChange(field, fieldState) {
-                this.props.fieldState(field, fieldState);
-            },
-            formSubscriptions: {
-                visited: true,
-                dirty: true,
-                valid: true
-            },
-            fieldSubscriptions: {
-                name: {
-                    pristine: true,
-                    valid: true
-                },
-                age: {
-                    pristine: true,
-                    valid: true
-                }
-            },
-            fieldConfigs: {
-                address: {
-                    afterSubmit: () => this.props.mocks.fieldConfig
-                }
             }
         });
     </script>

@@ -1,0 +1,31 @@
+<ignore-fields>
+
+    <form>
+        <input type="text" name="name" />
+        <input type="text" name="age" ignore />
+        <input type="text" name="address" ignore />
+    </form>
+
+    <script>
+
+        import withFinalForm from '..';
+
+        const component = withFinalForm({
+            formElement() {
+                this.props.element();
+                return this.$('form');
+            },
+            onSubmit(values) {
+
+                this.props.submit('/stuff', values);
+            },
+            initialValues: {
+                name: '',
+                age: null,
+                address: ''
+            }
+        });
+
+        export default component
+    </script>
+</ignore-fields>

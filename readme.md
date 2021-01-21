@@ -18,32 +18,32 @@ npm i -S riot-final-form
 ```html
 <some-form>
 
-    <form class='grid wrap'>
+    <form>
 
-        <div class="field col w-70 pr-md">
+        <div class="field">
             <label for="name">Name</label>
             <input type="text" id="name" name="name" />
             <div class="error"></div>
         </div>
-        <div class="field col w-30">
+        <div class="field">
             <label for="age">Age</label>
             <input type="text" id="age" name="age" />
             <div class="error"></div>
         </div>
 
-        <div class="field col w-100">
+        <div class="field">
             <label for="address">Address</label>
             <input type="text" id="address" name="address" />
             <div class="error"></div>
         </div>
 
-        <div class="field col w-100">
+        <div class="field">
             <label for="password">This element will be ignored</label>
             <input type="password" id="password" name="password" ignore />
             <div class="error"></div>
         </div>
 
-        <div class="actions grid">
+        <div>
             <div class="col w-50">
                 <button type='reset'>Reset</button>
             </div>
@@ -158,26 +158,6 @@ npm i -S riot-final-form
 </some-form>
 ```
 
-<a name="defaultDomBehaviorExample"></a>
-
-***Optionally if you wanted to keep default DOM behavior:***
-
-```html
-<some-form>
-    <form> ... </form>
-
-    <script>
-
-        export default withFinalForm({
-            ...
-            enableDefaultBehavior: true // onSubmit not required and will be ignored
-            ...
-        })
-    </script>
-</some-form>
-
-```
-
 <a name="manuallyInitializeFinalForm"></a>
 
 ***Manually initialize final form:***
@@ -209,6 +189,7 @@ There may be cases where you want to manually initialize FF, such as when you de
                 this.initializeFinalForm();
             }
 
+            // Nested lexical this
             onMounted() {
 
                 // Reference component
@@ -216,18 +197,18 @@ There may be cases where you want to manually initialize FF, such as when you de
 
                 getData().then((data) => {
 
-                    self.initialValues = someData;
+                    getMoreData().then(data2 => {
 
-                    // Must pass component for cases where you cannot
-                    // depend on lexical this
-                    self.initializeFinalForm.apply(self);
+                        self.initialValues = someData;
 
-
+                        // Must pass component for cases where you cannot
+                        // depend on lexical this
+                        self.initializeFinalForm.apply(self);
+                    })
                 });
             }
 
-            // or alternatively:
-
+            // External configuration
             onMounted() {
 
                 const self = this;
@@ -244,7 +225,7 @@ There may be cases where you want to manually initialize FF, such as when you de
 
 ***Notes:***
 
-> `e.preventDefault()` is called on submit unless explicitly specified otherwise. See [this](#defaultDomBehaviorExample) and [this](#enableDefaultBehaviorOption)
+> `e.preventDefault()` is called on submit unless explicitly specified otherwise. [See this](#enableDefaultBehaviorOption)
 
 > Input fields can have an `ignore` attribute attached to them which will flag them to be skipped for registration by final form. For example:
 > ```html
@@ -258,20 +239,19 @@ There may be cases where you want to manually initialize FF, such as when you de
 ## withFinalForm(component)
 Creates a final form wrapper for a component. Automatically unsubscribes and removes form when component unmounts. Configuration callbacks are all called bound to the riot component, so the lexical `this` will be the same as `onMounted`. The following configuration options are available:
 
-| Param                                                                    | Type                              | Description                                                                                                                  |
-| ------------------------------------------------------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| component.formElement                                                    | `function`                        | Required function that returns the form element to bind to                                                                   |
-| component.onSubmit                                                       | `function`                        | Final Form submit function. Required if `enableDefaultBehavior` is unset. Cannot not be used with `enableDefaultBehavior`    |
-| component.enableDefaultBehavior                                          | `boolean`                         | Allows forms to submit using default DOM behavior. Cannot be used with `onSubmit` <a name="enableDefaultBehaviorOption"></a> |
-| component.initialValues                                                  | `object`                          | Final Form initialValues                                                                                                     |
-| component.validate                                                       | `function`                        | Form validate function                                                                                                       |
-| component.onFormChange                                                   | [`onFormChange`](#onFormChange)   | Final Form listener that passes form state                                                                                   |
-| component.formSubscriptions                                              | `object`                          | Final Form subscriptions                                                                                                     |
-| component.formConfig                                                     | `object`                          | Final Form configs                                                                                                           |
-| component.onFieldChange                                                  | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                            |
-| component.fieldSubscriptions                                             | `object`                          | Final Form field subscriptions                                                                                               |
-| component.fieldConfigs                                                   | `object`                          | Final Form field configs                                                                                                     |
-| component.manuallyInitializeFinalForm | `boolean`                         | In case you want to manually initialize final form after some async event. [Read more about this flag](#manuallyInitializeFinalForm).                                                    |
+| Param                                 | Type                              | Description                                                                                                                                       |
+| ------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| component.formElement                 | `function`                        | Required function that returns the form element to bind to                                                                                        |
+| component.onSubmit                    | `function`                        | Final Form submit function. Prevents defeault behavior. If undefined, default DOM behavior will occur. <a name="enableDefaultBehaviorOption"></a> |
+| component.initialValues               | `object`                          | Final Form initialValues                                                                                                                          |
+| component.validate                    | `function`                        | Form validate function                                                                                                                            |
+| component.onFormChange                | [`onFormChange`](#onFormChange)   | Final Form listener that passes form state                                                                                                        |
+| component.formSubscriptions           | `object`                          | Final Form subscriptions                                                                                                                          |
+| component.formConfig                  | `object`                          | Final Form configs                                                                                                                                |
+| component.onFieldChange               | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                                                 |
+| component.fieldSubscriptions          | `object`                          | Final Form field subscriptions                                                                                                                    |
+| component.fieldConfigs                | `object`                          | Final Form field configs                                                                                                                          |
+| component.manuallyInitializeFinalForm | `boolean`                         | In case you want to manually initialize final form after some async event. [Read more about this flag](#manuallyInitializeFinalForm).             |
 
 ---
 

@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/damusix/riot-final-form/compare/v1.2.0...v2.0.0) (2021-01-21)
+
+
+### Bug Fixes
+
+* 🐛 remove redundant options ([1875e28](https://github.com/damusix/riot-final-form/commit/1875e2846bb722073d2d94ad25132f2bd77e796d))
+
+
+### Features
+
+* 🎸 ignore inputs, onMounted hoisting issue ([749abee](https://github.com/damusix/riot-final-form/commit/749abee046d72c9b7b6d02ee3627c7cc05c97cf3))
+
+
+### BREAKING CHANGES
+
+* 🧨 enableDefaultBehavior was removed and the same functionality can be
+acheived by omitting onSubmit function. onSubmit is no longer required.
+
 # [1.1.0](https://github.com/damusix/riot-final-form/compare/v1.0.0...v1.1.0) (2020-11-19)
 
 

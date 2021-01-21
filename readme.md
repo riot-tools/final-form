@@ -219,7 +219,7 @@ Field change callback
 
 ## Manually initialize final form
 
-There may be cases where you want to manually initialize FF, such as when you depend on an XHR request to load initial values. For these scenarios, you can use the `manuallyInitializeFinalForm` flag on your component, and manually trigger `component.initializeFinalForm(component);` inside of a lifecycle hook. The mounted riot component must be passed into the initialize function.
+There may be cases where you want to manually initialize FF, such as when you depend on an XHR request to load initial values. For these scenarios, you can use the `manuallyInitializeFinalForm` flag on your component, and manually trigger `component.initializeFinalForm();` inside of a lifecycle hook. Be cautious not to lose the lexical `this` of the `initializeFinalForm()` function. If you need to deeply nest or pass a callback that later calls this, you can do so by extracting into self `const self = this;` and binding it `initializeFinalForm.bind(self)`.
 
 ##### Example:
 
@@ -233,6 +233,19 @@ There may be cases where you want to manually initialize FF, such as when you de
         export default withFinalForm({
             manuallyInitializeFinalForm: true,
 
+            // Simple async or sync usage
+            async onMounted() {
+
+                this.initialValues = await getStateFromSomewhere();
+
+                if (specificCondition) {
+
+                    this.validate = otherValidationFunction
+                }
+
+                this.initializeFinalForm();
+            }
+
             onMounted() {
 
                 // Reference component
@@ -244,8 +257,22 @@ There may be cases where you want to manually initialize FF, such as when you de
 
                     // Must pass component for cases where you cannot
                     // depend on lexical this
-                    self.initializeFinalForm(self);
+                    self.initializeFinalForm.apply(self);
+
+
                 });
+            }
+
+            // or alternatively:
+
+            onMounted() {
+
+                const self = this;
+
+                const callback = () => self.initializeFinalForm.apply(self);
+
+                // Dynamically configure any final form configs before applyings
+                dynamicallyConfigure(self, callback);
             }
         })
     </script>

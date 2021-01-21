@@ -49,8 +49,16 @@ interface RiotFinalFormConfig {
     };
 }
 
+interface InitializedRiotForm {
+    [key: string]: any;
+    initializeFinalForm: Function;
+    finalForm: {
+        (): FormApi
+    }
+}
+
 interface WithFinalForm {
-    (config: RiotFinalFormConfig): any
+    (config: RiotFinalFormConfig): InitializedRiotForm
 }
 
 export default WithFinalForm

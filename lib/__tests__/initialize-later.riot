@@ -42,18 +42,15 @@
             onSubmit(values) {},
             onMounted() {
 
-                // Reference component
-                const self = this;
 
-                self.initialValues = {
+                this.initialValues = {
                     name: 'tutu',
                     age: 21,
                     address: 'tata'
                 };
 
-                self.props.initializeLater(self);
-
-                self.initializeFinalForm(self);
+                this.props.initializeLater(this);
+                this.initializeFinalForm();
             },
 
             validate(values) {

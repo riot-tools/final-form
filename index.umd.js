@@ -54,7 +54,7 @@
                 // update value
                 if (field.type === 'checkbox') {
                     field.checked = value;
-                } else {
+                } else if (field.type !== 'radio') {
                     field.value = value === undefined ? '' : value;
                 }
 

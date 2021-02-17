@@ -3,8 +3,8 @@
   "version": "2.0.1",
   "description": "Riot HOC for using Final Form",
   "main": "index.umd.js",
-  "module": "index.esm.js",
-  "js:next": "index.esm.js",
+  "module": "dist/index.esm.js",
+  "js:next": "dist/index.esm.js",
   "types": "types.d.ts",
   "directories": {
     "lib": "lib"

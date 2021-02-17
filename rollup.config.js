@@ -13,12 +13,12 @@ export default {
   output: [
     {
       name: 'RiotFinalForm',
-      file: 'index.umd.js',
+      file: 'dist/index.umd.js',
       format: 'umd'
     },
     {
       name: 'RiotFinalForm',
-      file: 'index.esm.js',
+      file: 'dist/index.esm.js',
       format: 'esm'
     }
   ]

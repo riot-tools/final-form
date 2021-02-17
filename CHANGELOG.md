@@ -1,3 +1,16 @@
+# [2.1.0-next.1](https://github.com/damusix/riot-final-form/compare/v2.0.0...v2.1.0-next.1) (2021-02-17)
+
+
+### Bug Fixes
+
+* 🐛 fix onFormMutate ([b67ee3e](https://github.com/damusix/riot-final-form/commit/b67ee3eb1ecc7636691bd90bf6b70ab67df44f2f))
+* 🐛 run rollup ([31068df](https://github.com/damusix/riot-final-form/commit/31068df74daa68254b7157ef2c75ad660af87ece))
+
+
+### Features
+
+* 🎸 onFormMutated ([fd656cb](https://github.com/damusix/riot-final-form/commit/fd656cb49f0f1c72511f46bc5b727beda5679886)), closes [#11](https://github.com/damusix/riot-final-form/issues/11)
+
 ## [2.0.1](https://github.com/damusix/riot-final-form/compare/v2.0.0...v2.0.1) (2021-01-21)
 
 

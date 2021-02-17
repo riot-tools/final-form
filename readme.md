@@ -6,6 +6,7 @@ Easily implement final form in your Riot components.
       - [Example:](#example)
 - [withFinalForm(component)](#withfinalformcomponent)
 - [onFormChange : `function`](#onformchange--function)
+- [onFormMutated : `function`](#onformmutated--function)
 - [onFieldChange : `function`](#onfieldchange--function)
 
 ## Usage
@@ -246,6 +247,7 @@ Creates a final form wrapper for a component. Automatically unsubscribes and rem
 | component.initialValues               | `object`                          | Final Form initialValues                                                                                                                          |
 | component.validate                    | `function`                        | Form validate function                                                                                                                            |
 | component.onFormChange                | [`onFormChange`](#onFormChange)   | Final Form listener that passes form state                                                                                                        |
+| component.onFormMutated               | [`onFormMutated`](#onFormMutated) | MutationObserver that listens for changes in the HTML form                                                                                        |
 | component.formSubscriptions           | `object`                          | Final Form subscriptions                                                                                                                          |
 | component.formConfig                  | `object`                          | Final Form configs                                                                                                                                |
 | component.onFieldChange               | [`onFieldChange`](#onFieldChange) | Callback ran when a field changes                                                                                                                 |
@@ -262,6 +264,63 @@ Form change callback
 | Param     | Type     | Description      |
 | --------- | -------- | ---------------- |
 | formState | `object` | final form state |
+
+---
+
+<a name="onFormMutated"></a>
+## onFormMutated : `function`
+Mutation observer callback
+
+| Param               | Type     | Description                                    |
+| ------------------- | -------- | ---------------------------------------------- |
+| formMutationOptions | `object` | Options to perform changes to final form state |
+
+```html
+<script>
+
+    withFinalForm({
+
+        ...
+
+        onFormMutated(formMutationOptions) {
+
+            const {
+                // Mutation observer callback
+                mutationsList: { target, addedNodes, removedNodes },
+                observer,
+
+                // Map of registrations (Map<HTMLElement, deregisterFunction()>)
+                registrations,
+
+                // Final form API
+                form,
+
+                // registerField(field: HTMLFormInputElement)
+                registerField
+            } = opts;
+
+            if (registrations.has(target) && somethingElse) {
+
+                const deregister = registration.get(target);
+                deregister();
+            }
+
+            if (addedNodes) {
+
+                addedNodes.forEach((el) => {
+
+                    if (someDomHelper.isFormElement(el)) {
+                        registerField(el);
+                    }
+                });
+            }
+        }
+
+        ...
+
+    });
+</script>
+```
 
 
 ---

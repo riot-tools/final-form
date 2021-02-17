@@ -1,0 +1,29 @@
+<initialize-later>
+
+    <form>
+        <input type="text" name="name" />
+        <input if={ state.show } type="text" name="age" />
+    </form>
+
+    <script>
+
+        import withFinalForm from '..';
+
+        export default withFinalForm({
+            formElement() {
+
+                return this.$('form');
+            },
+
+            onFormMutated(...args) {
+
+                this.props.formMutated(...args);
+            },
+
+            onMounted() {
+
+                this.update({ show: true });
+            }
+        });
+    </script>
+</initialize-later>

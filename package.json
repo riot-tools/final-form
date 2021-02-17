@@ -53,7 +53,6 @@
     "husky": "^4.2.5",
     "jest": "^24.9.0",
     "jsdom": "^15.2.1",
-    "mutationobserver-shim": "^0.3.7",
     "riot": "^4.6.6",
     "riot-jest-transformer": "^6.0.4",
     "rollup": "^1.27.0",

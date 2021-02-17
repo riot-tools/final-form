@@ -30,6 +30,17 @@ interface OnFieldChangeFunction {
     (field: string, fieldState: FieldState<Object>): any;
 }
 
+type OnFormMutatedOptions = {
+    mutationList: any,
+    observer: any,
+    registrations: Map<HTMLElement, Function>,
+    form: FormApi
+};
+
+interface OnFormMutatedFunction {
+    (opts: OnFormMutatedOptions): any;
+}
+
 interface RiotFinalFormConfig {
     formElement: FormElementFunction;
     onSubmit: OnSubmitFunction;
@@ -37,6 +48,8 @@ interface RiotFinalFormConfig {
     initialValues: object;
     validate: ValidateFunction;
     onFormChange: FormSubscriber<Object>;
+    onFormMutated: OnFormMutatedFunction;
+    mutatorOptions: Object;
     formSubscriptions: FormSubscription;
     formConfig: Config;
     onFieldChange: OnFieldChangeFunction;

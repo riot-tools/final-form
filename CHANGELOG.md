@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/damusix/riot-final-form/compare/v2.0.0...v2.0.1) (2021-02-18)
+
+
+### Bug Fixes
+
+* 🐛 run rollup ([31068df](https://github.com/damusix/riot-final-form/commit/31068df74daa68254b7157ef2c75ad660af87ece))
+
 # [2.1.0-next.1](https://github.com/damusix/riot-final-form/compare/v2.0.0...v2.1.0-next.1) (2021-02-17)
 
 

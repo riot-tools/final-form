@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/damusix/riot-final-form/compare/v2.1.1...v2.1.2) (2021-04-01)
+
+
+### Bug Fixes
+
+* 🐛 form mutator bind lexical this ([b44d3a9](https://github.com/damusix/riot-final-form/commit/b44d3a9d758eab11478b5dcb11c0628b52d830e9))
+
 ## [2.1.1](https://github.com/damusix/riot-final-form/compare/v2.1.0...v2.1.1) (2021-04-01)
 
 

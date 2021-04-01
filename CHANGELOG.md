@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/damusix/riot-final-form/compare/v2.1.0...v2.1.1) (2021-04-01)
+
+
+### Bug Fixes
+
+* 🐛 dont throw when no labels ([6be185b](https://github.com/damusix/riot-final-form/commit/6be185bb703ab45f66ffdb590e8ed17263df36ac))
+
 # [2.1.0](https://github.com/damusix/riot-final-form/compare/v2.0.0...v2.1.0) (2021-02-18)
 
 

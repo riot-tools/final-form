@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/damusix/riot-final-form/compare/v2.1.2...v2.1.3) (2021-04-21)
+
+
+### Bug Fixes
+
+* 🐛 register field ([0e970e1](https://github.com/damusix/riot-final-form/commit/0e970e1bd1905145ac226512d58d1aa76738e4f7))
+
 ## [2.1.2](https://github.com/damusix/riot-final-form/compare/v2.1.1...v2.1.2) (2021-04-01)
 
 

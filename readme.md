@@ -280,13 +280,13 @@ Mutation observer callback
 
     withFinalForm({
 
-        ...
+        // ...
 
         onFormMutated(formMutationOptions) {
 
             const {
                 // Mutation observer callback
-                mutationsList: { target, addedNodes, removedNodes },
+                mutationsList,
                 observer,
 
                 // Map of registrations (Map<HTMLElement, deregisterFunction()>)
@@ -298,25 +298,35 @@ Mutation observer callback
                 // registerField(field: HTMLFormInputElement)
                 registerField
             } = formMutationOptions;
+            
 
-            if (registrations.has(target) && somethingElse) {
+            for (const mutations of mutationsList) {
+                
+                const {
+                    addedNodes,
+                    removedNodes
+                } = mutation;
 
-                const deregister = registration.get(target);
-                deregister();
-            }
+                for (const el of [...addedNodes]) {
 
-            if (addedNodes) {
+                    if (/^(?:input|select|textarea)$/i.test(el.nodeName)) {
 
-                addedNodes.forEach((el) => {
-
-                    if (someDomHelper.isFormElement(el)) {
                         registerField(el);
                     }
-                });
+                }
+
+                for (const el of [...removedNodes]) {
+
+                    if (registrations.has(el)) {
+
+                        const unregister = registrations.get(el);
+                        unregister();
+                    }
+                }
             }
         }
 
-        ...
+        // ...
 
     });
 </script>

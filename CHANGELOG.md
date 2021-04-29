@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/damusix/riot-final-form/compare/v2.1.3...v2.1.4) (2021-04-29)
+
+
+### Bug Fixes
+
+* package json umd module ([0b0a860](https://github.com/damusix/riot-final-form/commit/0b0a860255811097208f7195af874d34d6c50b23))
+
 ## [2.1.3](https://github.com/damusix/riot-final-form/compare/v2.1.2...v2.1.3) (2021-04-21)
 
 

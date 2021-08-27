@@ -1,25 +1,41 @@
-import resolve from 'rollup-plugin-node-resolve'
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+import del from 'rollup-plugin-delete';
 
-export default {
-  input: 'lib/index.js',
-  globals: [
-    'final-form'
-  ],
-  plugins: [
-    // resolve({
-    //   // jsnext: true
-    // })
-  ],
-  output: [
+import pkg from './package.json';
+
+const libraryName = 'RiotFinalForm';
+
+export default [
     {
-      name: 'RiotFinalForm',
-      file: 'dist/index.umd.js',
-      format: 'umd'
-    },
-    {
-      name: 'RiotFinalForm',
-      file: 'dist/index.esm.js',
-      format: 'esm'
+        input: 'lib/index.ts',
+        plugins: [
+
+            del({ targets: 'dist/*' }),
+
+            typescript({ useTsconfigDeclarationDir: true }),
+
+            terser(),
+        ],
+        output: [
+            {
+                name: libraryName,
+                file: pkg.browser,
+                format: 'iife',
+                sourcemap: true,
+                inlineDynamicImports: true
+            },
+            {
+                file: pkg.module,
+                format: 'es',
+                sourcemap: true
+            },
+            {
+                file: pkg.main,
+                name: libraryName,
+                format: 'umd',
+                sourcemap: true
+            }
+        ],
     }
-  ]
-};
+];

@@ -1,16 +1,25 @@
-// Register field with form
-export default function (state, field) {
+import { InitializedComponent, InitializeFormState } from './types'
 
-    // Lexical this = mounted component
-    const self = this;
+type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+type FormElementEvent = Event & {
+    target: FormElement
+}
+
+export function registerField(
+    component: InitializedComponent,
+    state: InitializeFormState,
+    field: FormElement
+) {
 
     const {
         fieldSubscriptions = {},
         fieldConfigs = {},
         onFieldChange
-    } = self;
+    } = component;
 
     const { name } = field;
+    const isType = { [field.type]: true };
 
     const unregister = state.form.registerField(
         name,
@@ -18,16 +27,16 @@ export default function (state, field) {
             const { blur, change, focus, value, ...rest } = fieldState;
 
             // first time, register event listeners, unless it's a radio field
-            if (!state.registered[name] || field.type === 'radio') {
+            if (!state.registered[name] || isType.radio) {
                 field.addEventListener('blur', () => blur());
                 field.addEventListener('focus', () => focus());
 
                 // Radio buttons and hidden fields would not have a blur event
                 // in some cases, instead we bind to change event
-                if (field.type === 'radio' || field.type === 'hidden') {
+                if (isType.radio || isType.hidden) {
 
                     // Get radio label text as Radio button value
-                    field.addEventListener('change', ({ target }) => (
+                    field.addEventListener('change', ({ target }: FormElementEvent) => (
                         change(
                             target.value || (
                                 target.labels[0] || {}
@@ -36,9 +45,9 @@ export default function (state, field) {
                     ));
                 }
                 else {
-                    field.addEventListener('input', ({ target }) => change(
-                        field.type === 'checkbox'
-                            ? target.checked
+                    field.addEventListener('input', ({ target }: FormElementEvent) => change(
+                        isType.checkbox
+                            ? (target as HTMLInputElement).checked
                             : target.value
                     ));
                 }
@@ -46,8 +55,8 @@ export default function (state, field) {
             }
 
             // update value
-            if (field.type === 'checkbox' || field.type === 'radio') {
-                field.checked = field.value === value;
+            if (isType.checkbox || isType.radio) {
+                (field as HTMLInputElement).checked = field.value === value;
             } else {
                 field.value = value === undefined ? '' : value;
             }
@@ -56,7 +65,7 @@ export default function (state, field) {
             // Pass field, value, and other final form field subscriptions
             if (onFieldChange) {
 
-                onFieldChange.apply(self, [field, { value, ...rest }]);
+                onFieldChange.apply(component, [field, { value, ...rest }]);
             }
         },
 
@@ -79,4 +88,4 @@ export default function (state, field) {
         unregister();
         state.registrations.delete(field);
     });
-};
+}

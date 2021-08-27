@@ -1,4 +1,0 @@
-lib/__tests__
-.gitignore
-*.config.js
-Makefile

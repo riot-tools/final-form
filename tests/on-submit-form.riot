@@ -17,10 +17,13 @@
         import withFinalForm from '..';
 
         const component = withFinalForm({
+
             handleAfterSubmit() {
+
                 this.props.fieldConfig();
             },
-            onMounted() {
+            onMounted(props) {
+
                 // Pass the lexical this after Riot has set it for testing
                 // afterSubmit functionality
                 component.handleAfterSubmit = this.handleAfterSubmit;

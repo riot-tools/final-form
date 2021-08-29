@@ -1,3 +1,31 @@
+# [3.0.0](https://github.com/riot-tools/final-form/compare/v2.1.4...v3.0.0) (2021-08-29)
+
+
+* Merge branch 'next' ([d72170e](https://github.com/riot-tools/final-form/commit/d72170e519d4ad01ef70c9ab810284c1c8fe49f3))
+
+
+### Bug Fixes
+
+* 🐛 gh actions ([f732cc1](https://github.com/riot-tools/final-form/commit/f732cc123f959fb4f87fc03cba5ad33384de2807))
+
+
+### Features
+
+* 🎸 typescript ([69e3cb7](https://github.com/riot-tools/final-form/commit/69e3cb7cb4c5965575c5a9096809845ffed60b90)), closes [#9](https://github.com/riot-tools/final-form/issues/9)
+
+
+### BREAKING CHANGES
+
+* 🧨 typescript refactor
+* 🧨 typescript refactor
+
+chore: commitlint
+
+test: 💍 running with mocha ts
+
+Found way to import riot components into mocha ts tests using riot SSR.
+Fixed issues found in the translation of js to ts, and jest to chai.
+
 ## [2.1.4](https://github.com/damusix/riot-final-form/compare/v2.1.3...v2.1.4) (2021-04-29)
 
 

@@ -1,12 +1,13 @@
 import { createForm } from 'final-form';
-
-import registerField from './registerField';
+import { registerField } from './registerField';
 import { assertProperConfig } from './utils';
 
-export default function (state) {
+import type { InitializedComponent, InitializeFormState } from './types'
 
-    // Lexical this = mounted component
-    const self = this;
+export function initializeForm(
+    component: InitializedComponent,
+    state: InitializeFormState
+): void {
 
     const {
 
@@ -18,28 +19,28 @@ export default function (state) {
         validate,
         onFormChange,
         formElement
-    } = self;
+    } = component;
 
     // Manually initialized forms are not validated onMount,
     // instead they are validated on initialization
-    if (self.manuallyInitializeFinalForm === true) {
+    if (component.manuallyInitializeFinalForm === true) {
 
-        assertProperConfig(self);
+        assertProperConfig(component);
     }
 
     // Create form after component is mounted
     state.form = createForm({
         ...(formConfig || {}),
         initialValues,
-        onSubmit: (...args) => onSubmit.apply(self, args),
-        validate: (...args) => validate.apply(self, args),
+        onSubmit: (...args) => component.onSubmit.apply(component, args),
+        validate: (...args) => component.validate.apply(component, args),
         destroyOnUnregister: true
     });
 
     const unsubscribe = state.form.subscribe(
         formState => {
             if (onFormChange) {
-                onFormChange.apply(self, [formState]);
+                onFormChange.apply(component, [formState]);
             }
         },
         { // FormSubscription: the list of values you want to be updated about
@@ -60,7 +61,7 @@ export default function (state) {
         }
     };
 
-    const formEl = formElement.apply(self);
+    const formEl = formElement.apply(component);
 
     formEl.addEventListener('submit', e => {
 
@@ -78,7 +79,20 @@ export default function (state) {
 
     [...formEl.elements].forEach(field => {
 
-        registerField.apply(self, [state, field]);
+        // Only register valid fields with names
+        // Skip fields that are flagged to be ignored
+        const skip = (
+            field.nodeName === 'BUTTON' ||
+            field.hasAttribute('ignore') ||
+            !field.name ||
+            field.type === 'button' ||
+            field.type === 'reset'
+        )
+
+
+        if (skip) { return };
+
+        registerField(component, state, field);
     });
 
     if (state.observer) {

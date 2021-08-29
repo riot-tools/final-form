@@ -1,24 +1,32 @@
-import { isNotRegisterableField } from './utils';
+import { InitializedComponent, InitializeFormState } from './types'
 
-// Register field with form
-export default function (state, field) {
+type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-    if (isNotRegisterableField(field)) {
-        return false;
-    }
+type FormElementEvent = Event & {
+    target: FormElement
+}
 
-    // Lexical this = mounted component
-    const self = this;
+export function registerField(
+    component: InitializedComponent,
+    state: InitializeFormState,
+    field: FormElement
+) {
 
     const {
         fieldSubscriptions = {},
         fieldConfigs = {},
         onFieldChange
-    } = self;
+    } = component;
 
     const { name } = field;
+    const isType = { [field.type]: true };
 
-    const store = {};
+    const store = {
+        blur: null,
+        focus: null,
+        change: null,
+        input: null,
+    };
 
     const unregister = state.form.registerField(
         name,
@@ -43,14 +51,13 @@ export default function (state, field) {
             );
 
             // first time, register event listeners, unless it's a radio field
-            if (!state.registered[name] || field.type === 'radio') {
-
-                field.addEventListener('blur', store.blur);
-                field.addEventListener('focus', store.focus);
+            if (!state.registered[name] || isType.radio) {
+                field.addEventListener('blur', () => blur());
+                field.addEventListener('focus', () => focus());
 
                 // Radio buttons and hidden fields would not have a blur event
                 // in some cases, instead we bind to change event
-                if (field.type === 'radio' || field.type === 'hidden') {
+                if (isType.radio || isType.hidden) {
 
                     if (!field.value || field.labels === null) {
 
@@ -58,18 +65,28 @@ export default function (state, field) {
                     }
 
                     // Get radio label text as Radio button value
-                    field.addEventListener('change', store.change);
+                    field.addEventListener('change', ({ target }: FormElementEvent) => (
+                        change(
+                            target.value || (
+                                target.labels[0] || {}
+                            ).innerText
+                        )
+                    ));
                 }
                 else {
-                    field.addEventListener('input', store.input);
+                    field.addEventListener('input', ({ target }: FormElementEvent) => change(
+                        isType.checkbox
+                            ? (target as HTMLInputElement).checked
+                            : target.value
+                    ));
                 }
 
                 state.registered[name] = true;
             }
 
             // update value
-            if (field.type === 'checkbox' || field.type === 'radio') {
-                field.checked = field.value === value;
+            if (isType.checkbox || isType.radio) {
+                (field as HTMLInputElement).checked = field.value === value;
             } else {
                 field.value = value === undefined ? '' : value;
             }
@@ -78,7 +95,7 @@ export default function (state, field) {
             // Pass field, value, and other final form field subscriptions
             if (onFieldChange) {
 
-                onFieldChange.apply(self, [field, { value, ...rest }]);
+                onFieldChange.apply(component, [field, { value, ...rest }]);
             }
         },
 
@@ -108,6 +125,4 @@ export default function (state, field) {
 
         state.registrations.delete(field);
     });
-
-    return true;
-};
+}

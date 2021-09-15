@@ -157,17 +157,19 @@ export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFo
 
 /**
  * Checks if a component has `formElement` function and returns wrapped in `withFinalForm`
- * @param component riot component
+ * @param wrapped riot component
  * @returns initialized final form component
  */
-export const install = <C>(component: C & FinalFormComponent): C | C & FinalFormInitializedComponent => {
+export const install = <C>(component: C): C | C & FinalFormInitializedComponent => {
 
-    if (typeof component.formElement === 'function') {
+    const wrapped = component as C & FinalFormComponent;
 
-        return withFinalForm(component);
+    if (typeof wrapped.formElement === 'function') {
+
+        return withFinalForm(wrapped);
     }
 
-    return component;
+    return wrapped;
 };
 
 export default withFinalForm;

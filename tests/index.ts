@@ -1,11 +1,11 @@
 // import 'mutationobserver-shim';
-import { register, mount, unmount, install, RiotComponent, ComponentEnhancer, component } from 'riot';
+import { register, mount, unmount, install } from 'riot';
 
 import { expect } from 'chai';
 import { before, describe, it } from 'mocha';
 import sinon from 'sinon';
 
-import withFinalForm, { FinalFormInitializedComponent } from '../lib';
+import withFinalForm, { FinalFormInitializedComponent, install as installFinalForm } from '../lib';
 
 import './RiotFile';
 import OnSubmitForm from './on-submit-form.riot';
@@ -221,6 +221,7 @@ describe('functionality', () => {
 
         sinon.assert.calledOnce(stub.mocks.fieldConfig);
     });
+
     it('should unsubscribe final form on unmount', () => {
 
         expect(stub.tmpl.finalForm()).not.to.equal(null);
@@ -352,7 +353,6 @@ describe('functionality', () => {
 
         tmpl.unmount();
 
-        sinon.assert.calledOnce(stub.mutator.disconnect)
-
+        sinon.assert.calledOnce(stub.mutator.disconnect);
     });
 })

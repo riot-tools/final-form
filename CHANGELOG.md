@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/riot-tools/final-form/compare/v3.0.1...v3.0.2) (2021-09-15)
+
+
+### Bug Fixes
+
+* 🐛 typings for install ([65a557c](https://github.com/riot-tools/final-form/commit/65a557c5a8e13b5c65c6360afadd9c64c5c23401))
+
 ## [3.0.1](https://github.com/riot-tools/final-form/compare/v3.0.0...v3.0.1) (2021-09-15)
 
 

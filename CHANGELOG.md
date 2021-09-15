@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/riot-tools/final-form/compare/v3.0.0...v3.0.1) (2021-09-15)
+
+
+### Bug Fixes
+
+* 🐛 rework typings, install as plugin ([3e273b1](https://github.com/riot-tools/final-form/commit/3e273b10a79f1ea50c438b7e21d8f8790648c568))
+
 # [3.0.0](https://github.com/riot-tools/final-form/compare/v2.1.4...v3.0.0) (2021-08-29)
 
 

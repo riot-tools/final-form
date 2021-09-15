@@ -48,6 +48,7 @@
         "@babel/register": "^7",
         "@commitlint/cli": "^11",
         "@commitlint/config-conventional": "^11",
+        "@riot-tools/sak": "^1.0.1",
         "@riotjs/hot-reload": "^6.0.0",
         "@riotjs/ssr": "^7.1.1",
         "@semantic-release/changelog": "^5.0.1",

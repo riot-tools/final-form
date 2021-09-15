@@ -1,4 +1,4 @@
-import { InitializedComponent, InitializeFormState } from './types'
+import { FinalFormInitializedComponent, InternalFormState } from '.'
 
 type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -7,8 +7,8 @@ type FormElementEvent = Event & {
 }
 
 export function registerField(
-    component: InitializedComponent,
-    state: InitializeFormState,
+    component: FinalFormInitializedComponent,
+    state: InternalFormState,
     field: FormElement
 ) {
 

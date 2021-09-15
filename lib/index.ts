@@ -1,11 +1,80 @@
+import { makeOnMounted, makeOnBeforeUnmount } from '@riot-tools/sak';
+
 import { initializeForm } from './initializeForm';
 import { registerField } from './registerField';
 import { assertProperConfig } from './utils';
-import { WithFinalFormOpts, InitializeFormState, InitializedComponent } from './types';
+import { component, RiotComponent } from 'riot';
 
-export const withFinalForm = (component: WithFinalFormOpts): InitializedComponent => {
+import type {
+    Config,
+    FieldConfig,
+    FieldState,
+    FieldSubscription,
+    FormApi,
+    FormSubscription
+} from 'final-form';
 
-    const state: InitializeFormState = {
+
+type FieldRegistrations = Map<HTMLElement, Function>;
+
+export type OnFormMutatedArgument = {
+    mutationsList: MutationRecord[],
+    observer: MutationObserver,
+    registrations: FieldRegistrations,
+    form: FormApi,
+    registerField: (HTMLElement) => void
+};
+
+export type InternalFormState = {
+    form: FormApi;
+    registered: {
+        [key: string]: boolean
+    };
+    registrations: FieldRegistrations;
+    enableDefaultBehavior?: boolean;
+    observer?: MutationObserver;
+    mutatorOptions?: MutationObserverInit;
+    unsubscribe?: Function;
+};
+
+export type FinalFormComponent = RiotComponent & {
+
+    initialValues: object;
+    formConfig?: Config;
+    formSubscriptions?: FormSubscription;
+    manuallyInitializeFinalForm?: boolean;
+    mutatorOptions?: MutationObserverInit;
+
+    formElement: () => HTMLFormElement;
+    validate?: (errors: object) => object;
+    onSubmit?: (values: object) => void;
+    onFormChange?: (formState: FormApi) => void;
+    onFieldChange?: (field: HTMLElement, fieldState: FieldState<any>) => void;
+    onFormMutated?: (opts: OnFormMutatedArgument) => void;
+
+    fieldConfigs?: {
+        [key: string]: FieldConfig<any>
+    };
+
+    fieldSubscriptions?: {
+        [key: string]: FieldSubscription
+    };
+};
+
+export type FinalFormInitializedComponent = FinalFormComponent & {
+
+    finalForm: () => FormApi
+    initializeFinalForm: () => void
+};
+
+/**
+ * Registers form and fields automatically using Final Form
+ * @param component
+ * @returns
+ */
+export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFormInitializedComponent => {
+
+    const state: InternalFormState = {
 
         form: null,
         registered: {},
@@ -23,10 +92,6 @@ export const withFinalForm = (component: WithFinalFormOpts): InitializedComponen
         component.validate = () => ({});
     }
 
-    const {
-        onBeforeUnmount,
-        onMounted
-    } = component;
 
     // Validate configuration if we are not manually initializing
     if (component.manuallyInitializeFinalForm !== true) {
@@ -34,8 +99,7 @@ export const withFinalForm = (component: WithFinalFormOpts): InitializedComponen
         assertProperConfig(component);
     };
 
-    const initialized = component as InitializedComponent;
-
+    const initialized = component as C & FinalFormInitializedComponent;
 
     // Set function for manual initializing. Prevent double initialization.
     initialized.initializeFinalForm = function () {
@@ -48,7 +112,7 @@ export const withFinalForm = (component: WithFinalFormOpts): InitializedComponen
         return initializeForm(this, state);
     }
 
-    initialized.onMounted = function (...args) {
+    makeOnMounted(initialized, function () {
 
         if (this.onFormMutated instanceof Function) {
 
@@ -74,30 +138,36 @@ export const withFinalForm = (component: WithFinalFormOpts): InitializedComponen
 
             initializeForm(this, state);
         }
+    });
 
-        if (onMounted) {
-            onMounted.apply(this, args);
-        }
-    };
-
-    // Cleanup before unmounting to avoid memory leaks
-    initialized.onBeforeUnmount = function (...args) {
+    makeOnBeforeUnmount(initialized, () => {
 
         state.unsubscribe();
 
         state.form = null;
         state.registered = {};
         state.registrations = new Map();
-
-        if (onBeforeUnmount) {
-            onBeforeUnmount.apply(this, args);
-        }
-    };
+    });
 
     // Access finaly form
     initialized.finalForm = () => state.form;
 
     return initialized;
+};
+
+/**
+ * Checks if a component has `formElement` function and returns wrapped in `withFinalForm`
+ * @param component riot component
+ * @returns initialized final form component
+ */
+export const install = <C>(component: C & FinalFormComponent): C | C & FinalFormInitializedComponent => {
+
+    if (typeof component.formElement === 'function') {
+
+        return withFinalForm(component);
+    }
+
+    return component;
 };
 
 export default withFinalForm;

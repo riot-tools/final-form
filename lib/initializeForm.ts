@@ -2,11 +2,11 @@ import { createForm } from 'final-form';
 import { registerField } from './registerField';
 import { assertProperConfig } from './utils';
 
-import type { InitializedComponent, InitializeFormState } from './types'
+import type { FinalFormInitializedComponent, InternalFormState } from '.'
 
 export function initializeForm(
-    component: InitializedComponent,
-    state: InitializeFormState
+    component: FinalFormInitializedComponent,
+    state: InternalFormState
 ): void {
 
     const {
@@ -32,8 +32,8 @@ export function initializeForm(
     state.form = createForm({
         ...(formConfig || {}),
         initialValues,
-        onSubmit: (...args) => component.onSubmit.apply(component, args),
-        validate: (...args) => component.validate.apply(component, args),
+        onSubmit: (...args) => onSubmit.apply(component, args),
+        validate: (...args) => validate.apply(component, args),
         destroyOnUnregister: true
     });
 

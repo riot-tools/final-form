@@ -1,4 +1,4 @@
-import { FinalFormInitializedComponent, InternalFormState } from '.'
+import { FinalFormInitializedComponent, WffInternalState } from '.'
 
 type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -8,7 +8,7 @@ type FormElementEvent = Event & {
 
 export function registerField(
     component: FinalFormInitializedComponent,
-    state: InternalFormState,
+    state: WffInternalState,
     field: FormElement
 ) {
 

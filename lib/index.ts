@@ -11,7 +11,8 @@ import type {
     FieldState,
     FieldSubscription,
     FormApi,
-    FormSubscription
+    FormSubscription,
+    InternalFormState
 } from 'final-form';
 
 
@@ -25,7 +26,7 @@ export type OnFormMutatedArgument = {
     registerField: (HTMLElement) => void
 };
 
-export type InternalFormState = {
+export type WffInternalState = {
     form: FormApi;
     registered: {
         [key: string]: boolean
@@ -48,7 +49,7 @@ export type FinalFormComponent = RiotComponent & {
     formElement: () => HTMLFormElement;
     validate?: (errors: object) => object;
     onSubmit?: (values: object) => void;
-    onFormChange?: (formState: FormApi) => void;
+    onFormChange?: (formState: InternalFormState) => void;
     onFieldChange?: (field: HTMLElement, fieldState: FieldState<any>) => void;
     onFormMutated?: (opts: OnFormMutatedArgument) => void;
 
@@ -74,7 +75,7 @@ export type FinalFormInitializedComponent = FinalFormComponent & {
  */
 export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFormInitializedComponent => {
 
-    const state: InternalFormState = {
+    const state: WffInternalState = {
 
         form: null,
         registered: {},

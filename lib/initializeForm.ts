@@ -2,11 +2,11 @@ import { createForm } from 'final-form';
 import { registerField } from './registerField';
 import { assertProperConfig } from './utils';
 
-import type { FinalFormInitializedComponent, InternalFormState } from '.'
+import type { FinalFormInitializedComponent, WffInternalState } from '.'
 
 export function initializeForm(
     component: FinalFormInitializedComponent,
-    state: InternalFormState
+    state: WffInternalState
 ): void {
 
     const {

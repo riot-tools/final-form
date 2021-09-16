@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/riot-tools/final-form/compare/v3.0.2...v3.0.3) (2021-09-16)
+
+
+### Bug Fixes
+
+* 🐛 onFormChange arg type ([f64cef2](https://github.com/riot-tools/final-form/commit/f64cef2e844cf241efe054f9442e1c1f549ecac7))
+
 ## [3.0.2](https://github.com/riot-tools/final-form/compare/v3.0.1...v3.0.2) (2021-09-15)
 
 

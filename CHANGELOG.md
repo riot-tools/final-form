@@ -1,3 +1,11 @@
+## [3.0.4](https://github.com/riot-tools/final-form/compare/v3.0.3...v3.0.4) (2021-09-22)
+
+
+### Bug Fixes
+
+* 🐛 play nice w typescript ([ef7f29b](https://github.com/riot-tools/final-form/commit/ef7f29b176f17e23732531a561a2c564e3fab160))
+* 🐛 typings and browser package ([cb651ee](https://github.com/riot-tools/final-form/commit/cb651eeb7ca839196190fff3d067b694aae6881b))
+
 ## [3.0.3](https://github.com/riot-tools/final-form/compare/v3.0.2...v3.0.3) (2021-09-16)
 
 

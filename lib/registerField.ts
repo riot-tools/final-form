@@ -6,8 +6,8 @@ type FormElementEvent = Event & {
     target: FormElement
 }
 
-export function registerField(
-    component: FinalFormInitializedComponent,
+export function registerField <C>(
+    component: FinalFormInitializedComponent<C>,
     state: WffInternalState,
     field: FormElement
 ) {

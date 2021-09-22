@@ -3,7 +3,6 @@ import { makeOnMounted, makeOnBeforeUnmount } from '@riot-tools/sak';
 import { initializeForm } from './initializeForm';
 import { registerField } from './registerField';
 import { assertProperConfig } from './utils';
-import { component, RiotComponent } from 'riot';
 
 import type {
     Config,
@@ -38,7 +37,7 @@ export type WffInternalState = {
     unsubscribe?: Function;
 };
 
-export type FinalFormComponent = RiotComponent & {
+export type FinalFormComponent<T> = T & {
 
     initialValues: object;
     formConfig?: Config;
@@ -50,7 +49,7 @@ export type FinalFormComponent = RiotComponent & {
     validate?: (errors: object) => object;
     onSubmit?: (values: object) => void;
     onFormChange?: (formState: InternalFormState) => void;
-    onFieldChange?: (field: HTMLElement, fieldState: FieldState<any>) => void;
+    onFieldChange?: (field: HTMLInputElement, fieldState: FieldState<any>) => void;
     onFormMutated?: (opts: OnFormMutatedArgument) => void;
 
     fieldConfigs?: {
@@ -62,7 +61,7 @@ export type FinalFormComponent = RiotComponent & {
     };
 };
 
-export type FinalFormInitializedComponent = FinalFormComponent & {
+export type FinalFormInitializedComponent<T> = FinalFormComponent<T> & {
 
     finalForm: () => FormApi
     initializeFinalForm: () => void
@@ -73,7 +72,7 @@ export type FinalFormInitializedComponent = FinalFormComponent & {
  * @param component
  * @returns
  */
-export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFormInitializedComponent => {
+export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormInitializedComponent<C> => {
 
     const state: WffInternalState = {
 
@@ -100,7 +99,7 @@ export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFo
         assertProperConfig(component);
     };
 
-    const initialized = component as C & FinalFormInitializedComponent;
+    const initialized = component as FinalFormInitializedComponent<C>;
 
     // Set function for manual initializing. Prevent double initialization.
     initialized.initializeFinalForm = function () {
@@ -161,9 +160,9 @@ export const withFinalForm = <C>(component: C & FinalFormComponent): C & FinalFo
  * @param wrapped riot component
  * @returns initialized final form component
  */
-export const install = <C>(component: C): C | C & FinalFormInitializedComponent => {
+export const install = <C>(component: C): C | FinalFormInitializedComponent<C> => {
 
-    const wrapped = component as C & FinalFormComponent;
+    const wrapped = component as FinalFormComponent<C>;
 
     if (typeof wrapped.formElement === 'function') {
 

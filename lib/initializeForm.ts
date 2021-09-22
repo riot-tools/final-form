@@ -4,8 +4,8 @@ import { assertProperConfig } from './utils';
 
 import type { FinalFormInitializedComponent, WffInternalState } from '.'
 
-export function initializeForm(
-    component: FinalFormInitializedComponent,
+export function initializeForm <C>(
+    component: FinalFormInitializedComponent<C>,
     state: WffInternalState
 ): void {
 

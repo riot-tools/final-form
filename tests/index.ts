@@ -1,11 +1,11 @@
 // import 'mutationobserver-shim';
-import { register, mount, unmount, install } from 'riot';
+import { register, mount, unmount } from 'riot';
 
 import { expect } from 'chai';
 import { before, describe, it } from 'mocha';
 import sinon from 'sinon';
 
-import withFinalForm, { FinalFormInitializedComponent, install as installFinalForm } from '../lib';
+import withFinalForm, { FinalFormInitializedComponent } from '../lib';
 
 import './RiotFile';
 import OnSubmitForm from './on-submit-form.riot';
@@ -235,7 +235,7 @@ describe('functionality', () => {
 
         const { tmpl } = mountForm('default-behavior-form');
 
-        const form = (tmpl as FinalFormInitializedComponent).formElement();
+        const form = (tmpl as FinalFormInitializedComponent<any>).formElement();
         form.dispatchEvent(new Event('submit'));
 
         sinon.assert.notCalled(stub.mocks.submit);
@@ -260,7 +260,7 @@ describe('functionality', () => {
 
         const { tmpl, div } = mountForm('ignore-fields');
 
-        const form = (tmpl as FinalFormInitializedComponent).formElement();
+        const form = (tmpl as FinalFormInitializedComponent<any>).formElement();
 
         const name = div.querySelector('[name="name"]') as HTMLInputElement;
         const age = div.querySelector('[name="age"]') as HTMLInputElement;
@@ -292,7 +292,7 @@ describe('functionality', () => {
 
         const { tmpl, div } = mountForm('field-type-events');
 
-        const form = (tmpl as FinalFormInitializedComponent).formElement();
+        const form = (tmpl as FinalFormInitializedComponent<any>).formElement();
 
         const name = div.querySelector('[name="name"]') as HTMLInputElement;
         const music = div.querySelector('[name="music"]') as HTMLInputElement;

@@ -1,10 +1,15 @@
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import del from 'rollup-plugin-delete';
+import nodeResolve from '@rollup/plugin-node-resolve';
 
 import pkg from './package.json';
 
 const libraryName = 'RiotFinalForm';
+
+const globals = {
+    '@riot-tools/sak': 'RiotSak'
+}
 
 export default [
     {
@@ -13,6 +18,7 @@ export default [
 
             del({ targets: 'dist/*' }),
 
+            nodeResolve(),
             typescript({ useTsconfigDeclarationDir: true }),
 
             terser(),
@@ -23,7 +29,8 @@ export default [
                 file: pkg.cdn,
                 format: 'iife',
                 sourcemap: true,
-                inlineDynamicImports: true
+                inlineDynamicImports: true,
+                globals
             },
             {
                 file: pkg.module,

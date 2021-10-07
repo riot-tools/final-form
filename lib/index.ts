@@ -14,22 +14,23 @@ import type {
     InternalFormState
 } from 'final-form';
 
-
+type PropType<TObj, TProp extends keyof TObj> = TObj[TProp];
 type FieldRegistrations = Map<HTMLElement, Function>;
 
-export type OnFormMutatedArgument = {
+type RffFieldConfigs<V> = Record<keyof V, FieldConfig<PropType<V, keyof V>>>
+type RffFieldSubscriptions<V> = Record<keyof V, FieldSubscription>
+
+export type OnFormMutatedArgument<V> = {
     mutationsList: MutationRecord[],
     observer: MutationObserver,
     registrations: FieldRegistrations,
-    form: FormApi,
+    form: FormApi<V>,
     registerField: (HTMLElement) => void
 };
 
-export type WffInternalState = {
-    form: FormApi;
-    registered: {
-        [key: string]: boolean
-    };
+export type RffInternalState<V> = {
+    form: FormApi<V>;
+    registered: Partial<Record<keyof V, boolean>>;
     registrations: FieldRegistrations;
     enableDefaultBehavior?: boolean;
     observer?: MutationObserver;
@@ -37,44 +38,47 @@ export type WffInternalState = {
     unsubscribe?: Function;
 };
 
-export type FinalFormComponent<T> = T & {
+export type FinalFormComponent<T, V= {}> = T & {
 
-    initialValues: object;
-    formConfig?: Config;
+    initialValues: Partial<V>;
+    formConfig?: Partial<Config<V, V>>;
     formSubscriptions?: FormSubscription;
     manuallyInitializeFinalForm?: boolean;
     mutatorOptions?: MutationObserverInit;
 
     formElement: () => HTMLFormElement;
-    validate?: (errors: object) => object;
-    onSubmit?: (values: object) => void;
+    validate?: (values: Partial<V>) => Partial<Record<keyof V, string>>;
+    onSubmit?: (values: V) => void;
     onFormChange?: (formState: InternalFormState) => void;
-    onFieldChange?: (field: HTMLInputElement, fieldState: FieldState<any>) => void;
-    onFormMutated?: (opts: OnFormMutatedArgument) => void;
+    onFieldChange?: (field: HTMLInputElement, fieldState: FieldState<PropType<V, keyof V>>) => void;
+    onFormMutated?: (opts: OnFormMutatedArgument<V>) => void;
 
-    fieldConfigs?: {
-        [key: string]: FieldConfig<any>
-    };
+    fieldConfigs?: Partial<RffFieldConfigs<V>>;
 
-    fieldSubscriptions?: {
-        [key: string]: FieldSubscription
-    };
+    fieldSubscriptions?: Partial<RffFieldSubscriptions<V>>;
 };
 
-export type FinalFormInitializedComponent<T> = FinalFormComponent<T> & {
+export type FinalFormInitializedComponent<T, V = {}> = FinalFormComponent<T, V> & {
 
-    finalForm: () => FormApi
+    finalForm: () => FormApi<V>
     initializeFinalForm: () => void
 };
+
+/**
+ * Utility type for declaring error objects
+ */
+export type RffErrorsFor<T, Values> = ReturnType<
+    FinalFormComponent<T, Values>['validate']
+>
 
 /**
  * Registers form and fields automatically using Final Form
  * @param component
  * @returns
  */
-export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormInitializedComponent<C> => {
+export const withFinalForm = <C, V = {}>(component: FinalFormComponent<C, V>): FinalFormInitializedComponent<C, V> => {
 
-    const state: WffInternalState = {
+    const state: RffInternalState<V> = {
 
         form: null,
         registered: {},
@@ -89,7 +93,7 @@ export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormIni
 
     // Validation is optional
     if (!component.validate) {
-        component.validate = () => ({});
+        component.validate = () => ({} as any);
     }
 
 
@@ -99,7 +103,7 @@ export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormIni
         assertProperConfig(component);
     };
 
-    const initialized = component as FinalFormInitializedComponent<C>;
+    const initialized = component as FinalFormInitializedComponent<C, V>;
 
     // Set function for manual initializing. Prevent double initialization.
     initialized.initializeFinalForm = function () {
@@ -109,7 +113,7 @@ export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormIni
             throw Error('FinalForm has already been initialized on this component');
         }
 
-        return initializeForm(this, state);
+        initializeForm<C, V>(this, state);
     }
 
     makeOnMounted(initialized, function () {
@@ -136,7 +140,7 @@ export const withFinalForm = <C>(component: FinalFormComponent<C>): FinalFormIni
 
         if (!this.manuallyInitializeFinalForm) {
 
-            initializeForm(this, state);
+            initializeForm<C, V>(this, state);
         }
     });
 

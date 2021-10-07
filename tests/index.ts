@@ -1,11 +1,11 @@
 // import 'mutationobserver-shim';
-import { register, mount, unmount } from 'riot';
+import { register, mount, unmount, RiotComponent } from 'riot';
 
 import { expect } from 'chai';
 import { before, describe, it } from 'mocha';
 import sinon from 'sinon';
 
-import withFinalForm, { FinalFormInitializedComponent } from '../lib';
+import withFinalForm, { FinalFormComponent, FinalFormInitializedComponent, RffErrorsFor } from '../lib';
 
 import './RiotFile';
 import OnSubmitForm from './on-submit-form.riot';
@@ -356,3 +356,40 @@ describe('functionality', () => {
         sinon.assert.calledOnce(stub.mutator.disconnect);
     });
 })
+
+/**
+ * Type Testing:
+ type SomeValues = {
+
+     age: number,
+     name: string,
+     gender: string,
+     phone: string,
+     hispanic: boolean,
+     weak: boolean,
+     strongk: boolean
+ };
+
+ type Component = Partial<RiotComponent>;
+
+ withFinalForm <Component, SomeValues>({
+     initialValues: {},
+     formElement() { return this.$() },
+     validate(values) {
+
+         const errors: RffErrorsFor<Component, SomeValues> = {};
+
+         if (!values.age) {
+
+             errors.age = 'poop'
+         }
+
+         return errors;
+     },
+
+     onSubmit(values) {
+
+         values.age
+     }
+ })
+ */

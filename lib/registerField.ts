@@ -1,14 +1,16 @@
-import { FinalFormInitializedComponent, WffInternalState } from '.'
+import { FinalFormInitializedComponent, RffInternalState } from '.'
 
 type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
-type FormElementEvent = Event & {
-    target: FormElement
+type FormElementEvent<T = FormElement> = Event & {
+    target: T
 }
 
-export function registerField <C>(
-    component: FinalFormInitializedComponent<C>,
-    state: WffInternalState,
+type StringKeyOfV<V> = string & V[keyof V];
+
+export function registerField <C, V = {}>(
+    component: FinalFormInitializedComponent<C, V>,
+    state: RffInternalState<V>,
     field: FormElement
 ) {
 
@@ -29,7 +31,7 @@ export function registerField <C>(
     };
 
     const unregister = state.form.registerField(
-        name,
+        name as keyof V,
         fieldState => {
             const { blur, change, focus, value, ...rest } = fieldState;
 
@@ -64,21 +66,26 @@ export function registerField <C>(
                         console.warn('RiotFinalForm: ', field.name, 'field does not have a value or a label', field);
                     }
 
+
                     // Get radio label text as Radio button value
-                    field.addEventListener('change', ({ target }: FormElementEvent) => (
-                        change(
-                            target.value || (
-                                target.labels[0] || {}
-                            ).innerText
+                    field.addEventListener('change', ({ target }: FormElementEvent) => {
+
+                        const value = target.value || (
+                            target.labels[0] || {}
+                        ).innerText;
+
+                        return change(
+                            value as StringKeyOfV<V>
                         )
-                    ));
+                    });
                 }
                 else {
-                    field.addEventListener('input', ({ target }: FormElementEvent) => change(
-                        isType.checkbox
-                            ? (target as HTMLInputElement).checked
-                            : target.value
-                    ));
+                    field.addEventListener('input', ({ target }: FormElementEvent<HTMLInputElement>) => {
+
+                        const value = isType.checkbox ? target.checked : target.value;
+
+                        return change(value as (string | boolean) & V[keyof V])
+                    });
                 }
 
                 state.registered[name] = true;
@@ -86,9 +93,9 @@ export function registerField <C>(
 
             // update value
             if (isType.checkbox || isType.radio) {
-                (field as HTMLInputElement).checked = field.value === value;
+                (field as HTMLInputElement).checked = field.value === value as StringKeyOfV<V>;
             } else {
-                field.value = value === undefined ? '' : value;
+                field.value = value === undefined ? '' : value as StringKeyOfV<V>;
             }
 
             // execute field change callback

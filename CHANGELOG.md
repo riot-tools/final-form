@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/riot-tools/final-form/compare/v3.0.4...v3.1.0) (2021-10-07)
+
+
+### Features
+
+* 🎸 enhanced generics ([b12dd5f](https://github.com/riot-tools/final-form/commit/b12dd5f7e15d5893a77b365a4a9aa2918df3b074))
+
 ## [3.0.4](https://github.com/riot-tools/final-form/compare/v3.0.3...v3.0.4) (2021-09-22)
 
 

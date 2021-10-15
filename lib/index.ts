@@ -46,12 +46,12 @@ export type FinalFormComponent<T, V= {}> = T & {
     manuallyInitializeFinalForm?: boolean;
     mutatorOptions?: MutationObserverInit;
 
-    formElement: () => HTMLFormElement;
-    validate?: (values: Partial<V>) => Partial<Record<keyof V, string>>;
-    onSubmit?: (values: V) => void;
-    onFormChange?: (formState: InternalFormState) => void;
-    onFieldChange?: (field: HTMLInputElement, fieldState: FieldState<PropType<V, keyof V>>) => void;
-    onFormMutated?: (opts: OnFormMutatedArgument<V>) => void;
+    formElement: (this: T) => HTMLFormElement;
+    validate?: (this: T, values: Partial<V>) => Partial<Record<keyof V, string>>;
+    onSubmit?: (this: T, values: V) => void;
+    onFormChange?: (this: T, formState: InternalFormState) => void;
+    onFieldChange?: (this: T, field: HTMLInputElement, fieldState: FieldState<PropType<V, keyof V>>) => void;
+    onFormMutated?: (this: T, opts: OnFormMutatedArgument<V>) => void;
 
     fieldConfigs?: Partial<RffFieldConfigs<V>>;
 

@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/riot-tools/final-form/compare/v3.1.0...v3.1.1) (2021-10-15)
+
+
+### Bug Fixes
+
+* 🐛 pass lexical this to component typing ([962e2cf](https://github.com/riot-tools/final-form/commit/962e2cfe4679d379381a16c9301246c434f6a168))
+
 # [3.1.0](https://github.com/riot-tools/final-form/compare/v3.0.4...v3.1.0) (2021-10-07)
 
 

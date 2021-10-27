@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/riot-tools/final-form/compare/v3.1.1...v3.1.2) (2021-10-27)
+
+
+### Bug Fixes
+
+* 🐛 upgrade dependencies ([befdb4a](https://github.com/riot-tools/final-form/commit/befdb4aee3e4ca2de5193506619e9dcb76b3db38))
+
 ## [3.1.1](https://github.com/riot-tools/final-form/compare/v3.1.0...v3.1.1) (2021-10-15)
 
 

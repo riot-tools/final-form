@@ -41,7 +41,7 @@
         "riot": ">= 4.x.x"
     },
     "dependencies": {
-        "@riot-tools/sak": "1.0.2",
+        "@riot-tools/sak": "^2",
         "final-form": ">= 4.x.x"
     },
     "devDependencies": {
@@ -116,28 +116,6 @@
             "@semantic-release/npm",
             "@semantic-release/git"
         ]
-    },
-    "eslintConfig": {
-        "env": {
-            "browser": true,
-            "es6": true
-        },
-        "parser": "@typescript-eslint/parser",
-        "extends": [
-            "plugin:@typescript-eslint/recommended",
-            "eslint-config-riot"
-        ],
-        "parserOptions": {
-            "ecmaVersion": 2018,
-            "sourceType": "module"
-        },
-        "rules": {
-            "indent": "off",
-            "@typescript-eslint/indent": [
-                "error",
-                2
-            ]
-        }
     },
     "jspm": {
         "typeAcquisition": {

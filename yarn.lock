@@ -1044,10 +1044,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@riot-tools/sak@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@riot-tools/sak/-/sak-1.0.2.tgz#a30f59d344f32a2f42cbd6e0ba679b01e68af0e2"
-  integrity sha512-yVllwRDw2RDV90buJgeF+JrS1eTnlYsHBsshQsJBN+LZyT5YXcgYF58O3lSSGOJxMVf50iSKYknMuP5jK1mu9g==
+"@riot-tools/sak@^2":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@riot-tools/sak/-/sak-2.0.0.tgz#9be1a875aeb8691a4e225a76fa4120d20068870b"
+  integrity sha512-fJhPFGpokGs6RTeO06jKEUYviXD8OTguIqWIuY0FXSopp/XA7SI+OwZL9IO0vHrdaAgqE/62p9bEgt96ogVM+g==
 
 "@riotjs/compiler@^6.0.4":
   version "6.0.4"

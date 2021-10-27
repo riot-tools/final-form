@@ -1,6 +1,6 @@
 import { FinalFormInitializedComponent, RffInternalState } from '.'
 
-type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+export type FormElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 type FormElementEvent<T = FormElement> = Event & {
     target: T

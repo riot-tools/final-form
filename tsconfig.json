@@ -2,7 +2,7 @@
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
-        "lib": ["es2015", "es2016", "es2017", "dom"],
+        "lib": ["esnext", "dom"],
         "module": "esnext",
         "moduleResolution": "node",
         "noEmitOnError": false,
@@ -10,6 +10,7 @@
         "pretty": true,
         "sourceMap": true,
         "declaration": true,
+        "noImplicitThis": true,
         "target": "esnext",
         "declarationDir": "dist/types",
         "outDir": "dist",
